@@ -1,4 +1,5 @@
 const Koa = require('koa')
+const chalk = require('chalk')
 const bodyparser = require('koa-bodyparser')
 const error = require('koa-json-error')
 const parameter = require('koa-parameter')
@@ -16,5 +17,5 @@ app.use(parameter(app))
 registerRoute(app)
 
 app.listen(3000, () => {
-  console.log('app is listening 3000...')
+  console.log(chalk.cyan('app is listening 3000...'))
 })
