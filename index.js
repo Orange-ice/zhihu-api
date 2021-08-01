@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const bodyparser = require('koa-bodyparser')
 const error = require('koa-json-error')
+const parameter = require('koa-parameter')
 const app = new Koa()
 
 const registerRoute = require('./app/routes/index')
@@ -11,6 +12,7 @@ app.use(error({
   }
 ))
 app.use(bodyparser())
+app.use(parameter(app))
 registerRoute(app)
 
 app.listen(3000, () => {
