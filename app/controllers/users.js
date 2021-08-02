@@ -1,4 +1,6 @@
+const jwt = require('jsonwebtoken')
 const User = require('../models/users')
+const {secret} = require('../config')
 
 class UsersController {
   // 查询用户列表
@@ -24,7 +26,7 @@ class UsersController {
     // 唯一性校验
     const {name} = ctx.request.body
     const repeatUser = await User.findOne({name})
-    if(repeatUser) {
+    if (repeatUser) {
       ctx.throw(409, '用户已存在') // 409---冲突
     }
 
@@ -51,6 +53,20 @@ class UsersController {
       ctx.throw(404)
     }
     ctx.status = 204
+  }
+
+  async login(ctx) {
+    ctx.verifyParams({
+      name: {type: 'string', required: true},
+      password: {type: 'string', required: true}
+    })
+    const user = await User.findOne(ctx.request.body)
+    if (!user) {ctx.throw(401, '用户名或密码不正确')}
+    const {_id, name} = user
+    const token = jwt.sign({_id, name}, secret, {
+      expiresIn: '7d'
+    })
+    ctx.body = {token}
   }
 }
 

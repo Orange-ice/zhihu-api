@@ -8,6 +8,7 @@
     "start": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-json-error": "^3.1.2",
