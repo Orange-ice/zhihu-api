@@ -18,15 +18,24 @@ class UsersController {
   // 新建用户
   async create(ctx) {
     ctx.verifyParams({
-      name: {type: 'string', required: true}
+      name: {type: 'string', required: true},
+      password: {type: 'string', required: true}
     })
+    // 唯一性校验
+    const {name} = ctx.request.body
+    const repeatUser = await User.findOne({name})
+    if(repeatUser) {
+      ctx.throw(409, '用户已存在') // 409---冲突
+    }
+
     ctx.body = await new User(ctx.request.body).save()
   }
 
   // 更新用户
   async update(ctx) {
     ctx.verifyParams({
-      name: {type: 'string', required: true}
+      name: {type: 'string', required: false},
+      password: {type: 'string', required: false}
     })
     const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body)
     if (!user) {
