@@ -81,7 +81,7 @@ class UsersController {
     ctx.body = {token}
   }
 
-  // 获取关注的人的列表
+  // 获取某个用户关注的人的列表
   async listFollowing(ctx) {
     // 获取following数组并填充用户数据
     const user = await User.findById(ctx.params.id).select('+following').populate('following')
@@ -93,6 +93,13 @@ class UsersController {
   async listFollowers(ctx) {
     const users = await User.find({following: ctx.params.id})
     ctx.body = users
+  }
+
+  // 根据id检测是否存在对应用户
+  async checkUserExist(ctx, next) {
+    const user = await User.findById(ctx.params.id)
+    if (!user) {ctx.throw(404, '用户不存在')}
+    await next()
   }
 
   // 关注别人
