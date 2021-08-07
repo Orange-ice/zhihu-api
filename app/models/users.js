@@ -18,12 +18,12 @@ const UserSchema = new Schema({
   avatar: {type: String},
   gender: {type: String, enum: ['male', 'female']},
   headline: {type: String},
-  locations: {type: [{type: String}], select: false},
-  business: {type: String, select: false},
+  locations: {type: [{type: Schema.Types.ObjectId, ref: 'Topic'}], select: false},
+  business: {type: Schema.Types.ObjectId, ref: 'Topic', select: false},
   employment: {
     type: [{
-      company: {type: String},
-      job: {type: String},
+      company: {type: Schema.Types.ObjectId, ref: 'Topic'},
+      job: {type: Schema.Types.ObjectId, ref: 'Topic'},
       startDate: {type: String},
       endDate: {type: String}
     }],
@@ -31,8 +31,8 @@ const UserSchema = new Schema({
   },
   educations: {
     type: [{
-      school: {type: String},
-      major: {type: String},
+      school: {type: Schema.Types.ObjectId, ref: 'Topic'},
+      major: {type: Schema.Types.ObjectId, ref: 'Topic'},
       diploma: {type: Number, enum: [1, 2, 3, 4, 5]},
       startDate: {type: String},
       endDate: {type: String}

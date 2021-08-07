@@ -12,7 +12,9 @@ class UsersController {
 
   // 查询特定用户
   async findById(ctx) {
-    const user = await User.findById(ctx.params.id).select(selects)
+    const user = await User.findById(ctx.params.id)
+      .select(selects)
+      .populate('following locations business employment.company employment.job educations.school educations.major')
     if (!user) {
       ctx.throw(404, '用户不存在')
     }
