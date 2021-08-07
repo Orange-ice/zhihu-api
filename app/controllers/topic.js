@@ -3,7 +3,11 @@ const Topic = require('../models/topic')
 class TopicController {
   // 获取所有话题列表
   async find(ctx) {
-    ctx.body = await Topic.find()
+    let {size = 10, page = 1} = ctx.query
+    // Math.max 是使得page， size不小于 1
+    page = Math.max(Number(page), 1) - 1
+    size = Math.max(Number(size), 1)
+    ctx.body = await Topic.find().limit(size).skip(page * size)
   }
 
   // 根据id获取特定话题
