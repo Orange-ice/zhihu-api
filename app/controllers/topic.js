@@ -1,4 +1,5 @@
 const Topic = require('../models/topic')
+const User = require('../models/users')
 
 class TopicController {
   // 获取所有话题列表
@@ -38,6 +39,19 @@ class TopicController {
       new: true, // 返回修改后的对象
       useFindAndModify: false
     })
+  }
+
+  // 检查话题是否存在
+  async checkTopicExist(ctx, next) {
+    const topic = await Topic.findById(ctx.params.id)
+    if (!topic) {ctx.throw(404, '话题不存在')}
+    await next()
+  }
+
+  // 获取某个话题的关注者的列表
+  async listTopicFollowers(ctx) {
+    const users = await User.find({followingTopics: ctx.params.id})
+    ctx.body = users
   }
 }
 

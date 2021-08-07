@@ -6,6 +6,8 @@ const {
   findById,
   create,
   update,
+  listTopicFollowers,
+  checkTopicExist
 } = require('../controllers/topic')
 const {secret} = require('../config')
 
@@ -13,7 +15,8 @@ const auth = jwt({secret})
 
 router.get('/', find)
 router.get('/:id', findById)
-router.post('/', auth,create)
-router.put('/:id', auth, update)
+router.post('/', auth, create)
+router.put('/:id', auth, checkTopicExist, update)
+router.get('/:id/followers', checkTopicExist, listTopicFollowers)
 
 module.exports = router

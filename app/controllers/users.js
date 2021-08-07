@@ -125,6 +125,35 @@ class UsersController {
     ctx.status = 204
   }
 
+  // 关注话题
+  async followTopic(ctx) {
+    const currentTopic = await User.findById(ctx.state.user._id).select('+followingTopics')
+    if (!currentTopic.followingTopics.map(id => id.toString()).includes(ctx.params.id)) {
+      currentTopic.followingTopics.push(ctx.params.id)
+      currentTopic.save()
+    }
+    ctx.status = 204
+  }
+
+  // 取消话题关注
+  async unfollowTopic(ctx) {
+    const currentTopic = await User.findById(ctx.state.user._id).select('+followingTopics')
+    const index = currentTopic.followingTopics.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index !== -1) {
+      currentTopic.followingTopics.splice(index, 1)
+      currentTopic.save()
+    }
+    ctx.status = 204
+  }
+
+  // 获取某个用户关注的话题的列表
+  async listFollowingTopics(ctx) {
+    const user = await User.findById(ctx.params.id).select('+followingTopics').populate('followingTopics')
+    if (!user) {ctx.throw(404, '用户不存在')}
+    ctx.body = user.followingTopics
+  }
+
+
   // 检查当前登录用户是否操作的是自己
   async checkOwner(ctx, next) {
     if (ctx.params.id !== ctx.state.user._id) {ctx.throw(403, '没有权限')}
