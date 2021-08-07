@@ -7,7 +7,7 @@ class TopicController {
     // Math.max 是使得page， size不小于 1
     page = Math.max(Number(page), 1) - 1
     size = Math.max(Number(size), 1)
-    ctx.body = await Topic.find().limit(size).skip(page * size)
+    ctx.body = await Topic.find({name: new RegExp(ctx.query.name)}).limit(size).skip(page * size)
   }
 
   // 根据id获取特定话题
