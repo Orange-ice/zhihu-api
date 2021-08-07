@@ -9,6 +9,7 @@ const {Schema, model} = mongoose
  * @param business 行业
  * @param employment 职业经历 (公司，岗位，开始时间，结束时间)
  * @param educations 教育经历 (学校，专业，学历【1 高中及以下，2 大专，3 本科，4 硕士，5 博士及以上】,开始时间，结束时间)
+ * @param following 关注的人
  * */
 const UserSchema = new Schema({
   __v: {type: Number, select: false},
@@ -36,6 +37,10 @@ const UserSchema = new Schema({
       startDate: {type: String},
       endDate: {type: String}
     }],
+    select: false
+  },
+  following: {
+    type: [{type: Schema.Types.ObjectId, ref: 'User'}],
     select: false
   }
 })

@@ -81,6 +81,41 @@ class UsersController {
     ctx.body = {token}
   }
 
+  // 获取关注的人的列表
+  async listFollowing(ctx) {
+    // 获取following数组并填充用户数据
+    const user = await User.findById(ctx.params.id).select('+following').populate('following')
+    if (!user) {ctx.throw(404, '用户不存在')}
+    ctx.body = user.following
+  }
+
+  // 获取某个用户的粉丝列表
+  async listFollowers(ctx) {
+    const users = await User.find({following: ctx.params.id})
+    ctx.body = users
+  }
+
+  // 关注别人
+  async follow(ctx) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+following')
+    if (!currentUser.following.map(id => id.toString()).includes(ctx.params.id)) {
+      currentUser.following.push(ctx.params.id)
+      currentUser.save()
+    }
+    ctx.status = 204
+  }
+
+  // 取消关注
+  async unfollow(ctx) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+following')
+    const index = currentUser.following.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index !== -1) {
+      currentUser.following.splice(index, 1)
+      currentUser.save()
+    }
+    ctx.status = 204
+  }
+
   // 检查当前登录用户是否操作的是自己
   async checkOwner(ctx, next) {
     if (ctx.params.id !== ctx.state.user._id) {ctx.throw(403, '没有权限')}
