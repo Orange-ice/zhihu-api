@@ -17,10 +17,13 @@ const {
   followTopic,
   unfollowTopic,
   listFollowingTopics,
-  listQuestions
+  listQuestions,
+  listLikingAnswers, likeAnswer, unlikeAnswer,
+  dislikeAnswer, unDislikeAnswer, listDisLikingAnswers
 } = require('../controllers/users')
 
 const {checkTopicExist} = require('../controllers/topic')
+const {checkAnswerExist} = require('../controllers/answer')
 const {secret} = require('../config')
 
 const auth = jwt({secret})
@@ -40,5 +43,13 @@ router.put('/followingTopics/:id', auth, checkTopicExist, followTopic) // 关注
 router.delete('/followingTopics/:id', auth, checkTopicExist, unfollowTopic) // 取消话题关注
 router.get('/:id/followingTopics', listFollowingTopics) // 获取某个用户关注的话题列表
 router.get('/:id/questions', checkUserExist, listQuestions) // 获取用户的发表的问题列表
+
+router.patch('/likingAnswer/:id', auth, checkAnswerExist, likeAnswer, unDislikeAnswer) // 赞某个回答(同时取消踩)
+router.delete('/likingAnswer/:id', auth, checkAnswerExist, unlikeAnswer) // 取消赞某个回答
+router.get('/:id/likingAnswers', listLikingAnswers) // 获取某个用户赞过的回答
+router.patch('/dislikingAnswer/:id', auth, checkAnswerExist, dislikeAnswer, unlikeAnswer) // 踩某个回答（同时取消赞）
+router.delete('/dislikingAnswer/:id', auth, checkAnswerExist, unDislikeAnswer) // 取消踩某个回答
+router.get('/:id/dislikingAnswers', listDisLikingAnswers) // 获取某个用户踩过的回答
+
 
 module.exports = router

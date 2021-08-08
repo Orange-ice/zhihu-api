@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/users')
 const Question = require('../models/questions')
+const Answer = require('../models/answers')
 const {secret} = require('../config')
 
 const selects = '+locations +business +employment +educations'
@@ -128,21 +129,21 @@ class UsersController {
 
   // 关注话题
   async followTopic(ctx) {
-    const currentTopic = await User.findById(ctx.state.user._id).select('+followingTopics')
-    if (!currentTopic.followingTopics.map(id => id.toString()).includes(ctx.params.id)) {
-      currentTopic.followingTopics.push(ctx.params.id)
-      currentTopic.save()
+    const currentUser = await User.findById(ctx.state.user._id).select('+followingTopics')
+    if (!currentUser.followingTopics.map(id => id.toString()).includes(ctx.params.id)) {
+      currentUser.followingTopics.push(ctx.params.id)
+      currentUser.save()
     }
     ctx.status = 204
   }
 
   // 取消话题关注
   async unfollowTopic(ctx) {
-    const currentTopic = await User.findById(ctx.state.user._id).select('+followingTopics')
-    const index = currentTopic.followingTopics.map(id => id.toString()).indexOf(ctx.params.id)
+    const currentUser = await User.findById(ctx.state.user._id).select('+followingTopics')
+    const index = currentUser.followingTopics.map(id => id.toString()).indexOf(ctx.params.id)
     if (index !== -1) {
-      currentTopic.followingTopics.splice(index, 1)
-      currentTopic.save()
+      currentUser.followingTopics.splice(index, 1)
+      currentUser.save()
     }
     ctx.status = 204
   }
@@ -166,6 +167,69 @@ class UsersController {
     const questions = await Question.find({questioner: ctx.params.id})
     ctx.body = questions
   }
+
+  // 赞某个回答
+  async likeAnswer(ctx, next) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+likingAnswers')
+    if (!currentUser.likingAnswers.map(id => id.toString()).includes(ctx.params.id)) {
+      currentUser.likingAnswers.push(ctx.params.id)
+      currentUser.save()
+      await Answer.findByIdAndUpdate(ctx.params.id, {$inc: {voteCount: 1}})
+    }
+    ctx.status = 204
+    await next()
+  }
+
+  // 取消赞某个回答
+  async unlikeAnswer(ctx) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+likingAnswers')
+    const index = currentUser.likingAnswers.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index !== -1) {
+      currentUser.likingAnswers.splice(index, 1)
+      currentUser.save()
+      await Answer.findByIdAndUpdate(ctx.params.id, {$inc: {voteCount: -1}})
+    }
+    ctx.status = 204
+  }
+
+  // 获取某个用户赞过的回答
+  async listLikingAnswers(ctx) {
+    const user = await User.findById(ctx.params.id).populate('likingAnswers')
+    if (!user) {ctx.throw(404, '用户不存在')}
+    ctx.body = user.likingAnswers
+  }
+
+
+  // 踩某个回答
+  async dislikeAnswer(ctx, next) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+dislikingAnswers')
+    if (!currentUser.dislikingAnswers.map(id => id.toString()).includes(ctx.params.id)) {
+      currentUser.dislikingAnswers.push(ctx.params.id)
+      currentUser.save()
+    }
+    ctx.status = 204
+    await next()
+  }
+
+  // 取消踩某个回答
+  async unDislikeAnswer(ctx) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+dislikingAnswers')
+    const index = currentUser.dislikingAnswers.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index !== -1) {
+      currentUser.dislikingAnswers.splice(index, 1)
+      currentUser.save()
+    }
+    ctx.status = 204
+  }
+
+  // 获取某个用户踩过的回答
+  async listDisLikingAnswers(ctx) {
+    const user = await User.findById(ctx.params.id).populate('dislikingAnswers')
+    if (!user) {ctx.throw(404, '用户不存在')}
+    ctx.body = user.dislikingAnswers
+  }
+
+
 }
 
 module.exports = new UsersController()
