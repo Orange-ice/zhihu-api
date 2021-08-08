@@ -7,10 +7,13 @@ class CommentController {
     // Math.max 是使得page， size不小于 1
     page = Math.max(Number(page), 1) - 1
     size = Math.max(Number(size), 1)
+    // 查询二级评论参数
+    const {rootCommentId} = ctx.query
     ctx.body = await Comment.find({
       questionId: ctx.params.questionId,
-      answerId: ctx.params.answerId
-    }).limit(size).skip(page * size).populate('commentator')
+      answerId: ctx.params.answerId,
+      rootCommentId
+    }).limit(size).skip(page * size).populate('commentator replayTo')
   }
 
   // 检查评论是否存在
@@ -39,6 +42,9 @@ class CommentController {
   async create(ctx) {
     ctx.verifyParams({
       content: {type: 'string', required: true},
+      // 二级评论的参数
+      rootCommentId: {type: 'string', required: false},
+      replayTo: {type: 'string', required: false},
     })
     ctx.body = await new Comment({
       ...ctx.request.body,
@@ -53,7 +59,8 @@ class CommentController {
     ctx.verifyParams({
       content: {type: 'string', required: false},
     })
-    ctx.body = await Comment.findByIdAndUpdate(ctx.params.id, ctx.request.body, {
+    const {content} = ctx.request
+    ctx.body = await Comment.findByIdAndUpdate(ctx.params.id, content, {
       new: true, // 返回修改后的对象
       useFindAndModify: false
     })
