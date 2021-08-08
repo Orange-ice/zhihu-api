@@ -12,7 +12,7 @@ class QuestionController {
 
   // 根据id获取特定问题
   async findById(ctx) {
-    const question = await Question.findById(ctx.params.id).select('+questioner').populate('questioner')
+    const question = await Question.findById(ctx.params.id).populate('questioner topics')
     if (!question) {ctx.throw(404, '问题不存在')}
     ctx.body = question
   }
