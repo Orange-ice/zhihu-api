@@ -63,6 +63,6 @@ const UserSchema = new Schema({
     type: [{type: Schema.Types.ObjectId, ref: 'Answer'}],
     select: false
   }
-})
+}, {timestamps: true})
 
 module.exports = model('User', UserSchema)

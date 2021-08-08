@@ -10,6 +10,6 @@ const questionSchema = new Schema({
     type: [{type: Schema.Types.ObjectId, ref: 'Topic'}],
     select: false
   }
-})
+}, {timestamps: true})
 
 module.exports = model('Question', questionSchema)

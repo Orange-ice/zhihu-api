@@ -9,6 +9,6 @@ const commentSchema = new Schema({
   answerId: {type: String, required: true},
   rootCommentId: {type: String},
   replayTo: {type: Schema.Types.ObjectId, ref: 'User'} // 回复的用户
-})
+}, {timestamps: true})
 
 module.exports = model('Comment', commentSchema)

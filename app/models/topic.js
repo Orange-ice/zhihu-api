@@ -6,6 +6,6 @@ const topicSchema = new Schema({
   name: {type: String, required: true},
   avatar: {type: String, required: false},
   introduction: {type: String, required: false, select: false}
-})
+}, {timestamps: true})
 
 module.exports = model('Topic', topicSchema)
