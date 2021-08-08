@@ -10,6 +10,10 @@ const {Schema, model} = mongoose
  * @param employment 职业经历 (公司，岗位，开始时间，结束时间)
  * @param educations 教育经历 (学校，专业，学历【1 高中及以下，2 大专，3 本科，4 硕士，5 博士及以上】,开始时间，结束时间)
  * @param following 关注的人
+ * @param followingTopics 关注的话题
+ * @param likingAnswers 赞过的回答
+ * @param dislikingAnswers 踩过的回答
+ * @param collectingAnswers 收藏的答案
  * */
 const UserSchema = new Schema({
   __v: {type: Number, select: false},
@@ -52,6 +56,10 @@ const UserSchema = new Schema({
     select: false
   },
   dislikingAnswers: {
+    type: [{type: Schema.Types.ObjectId, ref: 'Answer'}],
+    select: false
+  },
+  collectingAnswers: {
     type: [{type: Schema.Types.ObjectId, ref: 'Answer'}],
     select: false
   }

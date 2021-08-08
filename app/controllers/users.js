@@ -229,6 +229,33 @@ class UsersController {
     ctx.body = user.dislikingAnswers
   }
 
+  // 收藏某个答案
+  async collectAnswer(ctx) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+collectingAnswers')
+    if (!currentUser.collectingAnswers.map(id => id.toString()).includes(ctx.params.id)) {
+      currentUser.collectingAnswers.push(ctx.params.id)
+      currentUser.save()
+    }
+    ctx.status = 204
+  }
+
+  // 取消收藏某个回答
+  async unCollectAnswer(ctx) {
+    const currentUser = await User.findById(ctx.state.user._id).select('+collectingAnswers')
+    const index = currentUser.collectingAnswers.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index !== -1) {
+      currentUser.collectingAnswers.splice(index, 1)
+      currentUser.save()
+    }
+    ctx.status = 204
+  }
+
+  // 获取某个用户收藏的答案
+  async listCollectingAnswers(ctx) {
+    const user = await User.findById(ctx.params.id).populate('collectingAnswers')
+    if (!user) {ctx.throw(404, '用户不存在')}
+    ctx.body = user.collectingAnswers
+  }
 
 }
 

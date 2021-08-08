@@ -19,7 +19,8 @@ const {
   listFollowingTopics,
   listQuestions,
   listLikingAnswers, likeAnswer, unlikeAnswer,
-  dislikeAnswer, unDislikeAnswer, listDisLikingAnswers
+  dislikeAnswer, unDislikeAnswer, listDisLikingAnswers,
+  collectAnswer,listCollectingAnswers,unCollectAnswer
 } = require('../controllers/users')
 
 const {checkTopicExist} = require('../controllers/topic')
@@ -46,10 +47,13 @@ router.get('/:id/questions', checkUserExist, listQuestions) // 获取用户的�
 
 router.patch('/likingAnswer/:id', auth, checkAnswerExist, likeAnswer, unDislikeAnswer) // 赞某个回答(同时取消踩)
 router.delete('/likingAnswer/:id', auth, checkAnswerExist, unlikeAnswer) // 取消赞某个回答
-router.get('/:id/likingAnswers', listLikingAnswers) // 获取某个用户赞过的回答
+router.get('/:id/likingAnswers', listLikingAnswers) // 获取某个用户赞过的回答列表
 router.patch('/dislikingAnswer/:id', auth, checkAnswerExist, dislikeAnswer, unlikeAnswer) // 踩某个回答（同时取消赞）
 router.delete('/dislikingAnswer/:id', auth, checkAnswerExist, unDislikeAnswer) // 取消踩某个回答
-router.get('/:id/dislikingAnswers', listDisLikingAnswers) // 获取某个用户踩过的回答
+router.get('/:id/dislikingAnswers', listDisLikingAnswers) // 获取某个用户踩过的回答列表
 
+router.patch('/collectingAnswer/:id', auth, checkAnswerExist, collectAnswer) // 收藏某个回答
+router.delete('/unCollectingAnswer/:id', auth, checkAnswerExist, unCollectAnswer) // 取消收藏某个回答
+router.get('/:id/collectingAnswers', listCollectingAnswers) // 获取某个用户收藏的回答列表
 
 module.exports = router
