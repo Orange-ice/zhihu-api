@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/users')
+const Question = require('../models/questions')
 const {secret} = require('../config')
 
 const selects = '+locations +business +employment +educations'
@@ -158,6 +159,12 @@ class UsersController {
   async checkOwner(ctx, next) {
     if (ctx.params.id !== ctx.state.user._id) {ctx.throw(403, '没有权限')}
     await next()
+  }
+
+  // 获取用户发表的问题列表
+  async listQuestions(ctx) {
+    const questions = await Question.find({questioner: ctx.params.id})
+    ctx.body = questions
   }
 }
 

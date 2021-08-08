@@ -16,7 +16,8 @@ const {
   checkUserExist,
   followTopic,
   unfollowTopic,
-  listFollowingTopics
+  listFollowingTopics,
+  listQuestions
 } = require('../controllers/users')
 
 const {checkTopicExist} = require('../controllers/topic')
@@ -31,12 +32,13 @@ router.put('/:id', auth, checkOwner, update)
 router.delete('/:id', auth, checkOwner, remove)
 router.post('/login', login) // 登录
 router.get('/:id/following', listFollowing) // 获取关注列表
-router.put('/following/:id', auth, checkUserExist,follow) // 关注别人
-router.delete('/following/:id', auth, checkUserExist,unfollow) // 取消关注
+router.put('/following/:id', auth, checkUserExist, follow) // 关注别人
+router.delete('/following/:id', auth, checkUserExist, unfollow) // 取消关注
 router.get('/:id/followers', listFollowers) // 获取粉丝列表
 
-router.put('/followingTopics/:id', auth, checkTopicExist,followTopic) // 关注话题
-router.delete('/followingTopics/:id', auth, checkTopicExist,unfollowTopic) // 取消话题关注
+router.put('/followingTopics/:id', auth, checkTopicExist, followTopic) // 关注话题
+router.delete('/followingTopics/:id', auth, checkTopicExist, unfollowTopic) // 取消话题关注
 router.get('/:id/followingTopics', listFollowingTopics) // 获取某个用户关注的话题列表
+router.get('/:id/questions', checkUserExist, listQuestions) // 获取用户的发表的问题列表
 
 module.exports = router
