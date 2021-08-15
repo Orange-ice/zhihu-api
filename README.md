@@ -9,10 +9,6 @@ yarn install
 yarn dev
 ```
 
-### 数据库(MongoDB)
-
-本项目使用的是 `MongoDB Atlas`
-
 ## 生产
 
 ```bash

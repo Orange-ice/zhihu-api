@@ -8,11 +8,10 @@ const mongoose = require('mongoose')
 const path = require('path')
 
 const registerRoute = require('./app/routes/index')
-const {connectionStr} = require('./app/config')
 const app = new Koa()
 
 // 连接mongoDB
-mongoose.connect(connectionStr, {useUnifiedTopology: true, useNewUrlParser: true}, () => {
+mongoose.connect('mongodb://localhost:27017/zhihu', {useUnifiedTopology: true, useNewUrlParser: true}, () => {
   console.log(chalk.magenta('mongoDB is connected successfully!'))
 })
 // 连接mongoDB的错误处理
