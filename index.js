@@ -6,9 +6,15 @@ const error = require('koa-json-error')
 const parameter = require('koa-parameter')
 const mongoose = require('mongoose')
 const path = require('path')
+const cors = require('koa2-cors')
 
 const registerRoute = require('./app/routes/index')
 const app = new Koa()
+
+// 允许跨域
+app.use(cors({
+  credentials: true
+}))
 
 // 连接mongoDB
 mongoose.connect('mongodb://localhost:27017/zhihu', {useUnifiedTopology: true, useNewUrlParser: true}, () => {
